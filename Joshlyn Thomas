@@ -1,0 +1,149 @@
+README.md
+# Community Cultural Festival Management System
+### Theme: President Trump and the Constitution – 5 Critical Issues to Explore With Students
+
+## Overview
+
+This C# Windows Forms application simulates a registration and management system for a community cultural festival. Our event, themed around "President Trump and the Constitution," features performances and showcases that explore civic education through music, dance, art, storytelling, and culinary demonstrations inspired by constitutional themes and rights.
+
+The purpose of this system is to:
+- Register and categorize participants by cultural performance type
+- Display participant and festival information
+- Provide a user-friendly interface for cultural inclusion and diversity
+
+## Features
+
+- Participant registration with real-time validation
+- Support for multiple cultural categories (e.g., Dance, Music, Art)
+- Use of arrays/lists, conditionals, and loops to manage input and display
+- Object-Oriented Design with a base `Participant` class and specialized subclasses
+- Built-in exception handling and input sanitization
+- Event-driven GUI with buttons, combo boxes, and labels
+
+## Specialized Classes
+
+- **Participant (base class)**: Holds name, category code, contact info, and registration fee.
+- **MusicParticipant**: Adds instrument type, band members, setup time.
+- **DanceParticipant**: Adds dance style, preferred stage size, choreographer.
+- **ArtParticipant**: Includes art medium and display dimensions.
+- **CulinaryParticipant**: Captures cuisine type and sample sizes.
+
+Each class ensures cultural depth and supports festival logistics.
+
+## Why It Matters
+
+This project bridges programming fundamentals with inclusive design practices. It highlights how technology can serve culturally diverse communities and promote understanding of democratic values and expression.
+
+
+
+MANUAL.md 
+# Community Cultural Festival Management System – User Manual
+
+## Getting Started
+
+1. **Launch the Application**: Open the solution file in Visual Studio and run the project.
+2. **Main Interface**:
+   - Enter participant name and contact information.
+   - Choose a cultural category (Music, Dance, Art, Culinary, etc.).
+   - Input category-specific data (e.g., dance style, instruments, stage requirements).
+   - Click "Register" to save the participant.
+   - Click "View Participants" to see a summary.
+
+## Key Functionalities
+
+| Action                  | Description |
+|------------------------|-------------|
+| Register Participant   | Saves participant data with validation |
+| View All Participants  | Displays all registered participants in a list |
+| Calculate Fees         | Sums up all registration fees |
+| Search by Name         | Finds participant by name |
+
+## Screenshots
+
+![Registration Form](screenshots/registration.png)
+![Participant List](screenshots/participants.png)
+
+## Accessibility Features
+
+- Tab-based keyboard navigation
+- Clear font and color contrast for readability
+- Error messages displayed using tooltips or colored labels
+
+## Testing Tips
+
+- Try entering invalid category codes or negative fees.
+- Attempt registration with incomplete fields.
+- Register multiple participants to test summary views.
+
+C# Code
+using System;
+using System.Collections.Generic;
+using System.Windows.Forms;
+
+namespace CulturalFestivalApp
+{
+    public partial class MainForm : Form
+    {
+        private List<Participant> participants = new List<Participant>();
+
+        public MainForm()
+        {
+            InitializeComponent();
+        }
+
+        private void btnRegister_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                string name = txtName.Text.Trim();
+                string category = cmbCategory.Text;
+                decimal fee = decimal.Parse(txtFee.Text);
+
+                if (string.IsNullOrEmpty(name) || string.IsNullOrEmpty(category))
+                    throw new Exception("All fields must be filled.");
+
+                Participant p = new Participant(name, category, txtContact.Text, fee);
+                participants.Add(p);
+                lblMessage.Text = "Participant registered successfully!";
+                lblMessage.ForeColor = System.Drawing.Color.Green;
+            }
+            catch (Exception ex)
+            {
+                lblMessage.Text = ex.Message;
+                lblMessage.ForeColor = System.Drawing.Color.Red;
+            }
+        }
+
+        private void btnView_Click(object sender, EventArgs e)
+        {
+            lstParticipants.Items.Clear();
+            foreach (var p in participants)
+            {
+                lstParticipants.Items.Add(p.ToString());
+            }
+        }
+    }
+
+    public class Participant
+    {
+        public string Name { get; set; }
+        public string CategoryCode { get; set; }
+        public string ContactInfo { get; set; }
+        public decimal FeePaid { get; set; }
+
+        public Participant(string name, string category, string contact, decimal fee)
+        {
+            if (fee < 0) throw new ArgumentException("Fee must be non-negative.");
+            Name = name;
+            CategoryCode = category;
+            ContactInfo = contact;
+            FeePaid = fee;
+        }
+
+        public override string ToString()
+        {
+            return $"{Name} - {CategoryCode} - Fee: ${FeePaid}";
+        }
+    }
+}
+
